@@ -43,7 +43,7 @@ input {
 .brand-tag {
   font-size: 1rem;
   font-weight: 700;
-  color: #f97316;
+  color: blue;
 }
 
 .header-actions {
@@ -71,7 +71,7 @@ input {
   padding: 0 22px;
   border: none;
   border-radius: 12px;
-  background: #f97316;
+  background: blue;
   color: #fff;
   cursor: pointer;
 }
@@ -93,7 +93,7 @@ input {
 
 .icon-button:hover {
   transform: translateY(-1px);
-  border-color: #f97316;
+  border-color: blue;
 }
 
 .category-bar {
@@ -116,9 +116,9 @@ input {
 
 .category-pill.active,
 .category-pill:hover {
-  background: #f97316;
+  background: blue;
   color: #fff;
-  border-color: #f97316;
+  border-color: blue;
 }
 
 .hero-banner {
@@ -126,7 +126,7 @@ input {
   grid-template-columns: 1.1fr 0.9fr;
   gap: 30px;
   align-items: center;
-  background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+  background: linear-gradient(135deg, blue 0%, blue 100%);
   color: #fff;
   border-radius: 32px;
   padding: 44px;
@@ -171,7 +171,7 @@ input {
 
 .primary-button {
   background: #fff;
-  color: #f97316;
+  color: blue;
 }
 
 .secondary-button {
@@ -207,6 +207,93 @@ input {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 24px;
+}
+
+.stk-section {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 28px;
+  padding: 32px;
+  margin: 40px 0;
+}
+
+.stk-section .section-header {
+  margin-bottom: 22px;
+}
+
+.stk-card {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+.stk-card p {
+  margin-bottom: 22px;
+  color: #4b5563;
+}
+
+.stk-form {
+  display: grid;
+  gap: 16px;
+}
+
+.form-field label {
+  display: block;
+  margin-bottom: 8px;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.form-field input {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 16px;
+  border: 1px solid #d1d5db;
+  outline: none;
+}
+
+.stk-form button {
+  width: 100%;
+  border: none;
+  border-radius: 16px;
+  background: #2563eb;
+  color: #fff;
+  padding: 14px 0;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.stk-form button:hover {
+  background: #1d4ed8;
+}
+
+.stk-status {
+  margin-top: 18px;
+  font-weight: 600;
+  color: #2563eb;
+}
+
+.stk-status.error {
+  color: #dc2626;
+}
+
+.stk-status.success {
+  color: #16a34a;
+}
+
+.stk-push {
+  width: 100%;
+  border: none;
+  border-radius: 16px;
+  background: #2563eb;
+  color: #fff;
+  padding: 14px 0;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+.stk-push:hover {
+  background: #1d4ed8;
 }
 
 .product-card {
@@ -267,7 +354,7 @@ input {
   display: inline-flex;
   padding: 6px 10px;
   border-radius: 999px;
-  background: #f97316;
+  background: blue;
   color: #fff;
   font-size: 0.72rem;
   font-weight: 700;
@@ -283,7 +370,7 @@ input {
 }
 
 .stars {
-  color: #f59e0b;
+  color: purple;
   font-size: 0.92rem;
 }
 
@@ -296,7 +383,7 @@ input {
   width: 100%;
   border: none;
   border-radius: 16px;
-  background: #f97316;
+  background: blue;
   color: #fff;
   padding: 14px 0;
   font-weight: 700;

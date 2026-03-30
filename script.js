@@ -133,11 +133,51 @@ const cartCount = document.getElementById("cartCount");
 const searchInput = document.getElementById("searchInput");
 const searchButton = document.getElementById("searchButton");
 const categoryBar = document.getElementById("categoryBar");
+const stkForm = document.getElementById("stkForm");
+const stkPhone = document.getElementById("stkPhone");
+const stkAmount = document.getElementById("stkAmount");
+const stkStatus = document.getElementById("stkStatus");
+const stkButton = document.getElementById("stkButton");
 let selectedCategory = "All";
 let cartTotal = 0;
 
 function formatPrice(value) {
   return "₦" + value.toLocaleString();
+}
+
+function normalizePhone(value) {
+  return value.replace(/\D/g, "");
+}
+
+function isValidPhone(value) {
+  const digits = normalizePhone(value);
+  return /^(?:254|0)7\d{8}$/.test(digits);
+}
+
+function formatDisplayPhone(value) {
+  const digits = normalizePhone(value);
+  if (digits.startsWith("254")) return "+" + digits;
+  if (digits.startsWith("0")) return "+254" + digits.slice(1);
+  return "+" + digits;
+}
+
+function showStkStatus(message, isError = false) {
+  if (!stkStatus) return;
+  stkStatus.textContent = message;
+  stkStatus.classList.toggle("error", isError);
+  stkStatus.classList.toggle("success", !isError);
+}
+
+function requestStkPush(phone, amount) {
+  if (!stkButton) return;
+  const displayPhone = formatDisplayPhone(phone);
+  showStkStatus(`Sending STK Push to ${displayPhone} for ₦${amount.toLocaleString()}...`);
+  stkButton.disabled = true;
+
+  setTimeout(() => {
+    showStkStatus(`STK Push requested successfully. Approve the charge on ${displayPhone}.`);
+    stkButton.disabled = false;
+  }, 1400);
 }
 
 function setActiveCategory(button) {
@@ -176,15 +216,26 @@ function renderProducts() {
           <span class="meta-text">${product.reviews} reviews</span>
         </div>
         <button class="add-to-cart">Add to Cart</button>
+        <button class="stk-push">Pay with STK</button>
       </div>
     `;
     const addButton = card.querySelector(".add-to-cart");
+    const stkPushButton = card.querySelector(".stk-push");
     addButton.addEventListener("click", () => {
       cartTotal += 1;
       cartCount.textContent = cartTotal;
       addButton.textContent = "Added";
       addButton.disabled = true;
     });
+    if (stkPushButton) {
+      stkPushButton.addEventListener("click", () => {
+        if (stkAmount) stkAmount.value = product.price;
+        if (stkPhone) stkPhone.focus();
+        showStkStatus(`Ready to request STK Push for ${product.name} at ₦${product.price.toLocaleString()}.`);
+        const section = document.querySelector(".stk-section");
+        if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
     productGrid.appendChild(card);
   });
 }
@@ -202,4 +253,30 @@ categoryBar.addEventListener("click", (event) => {
   setActiveCategory(target);
 });
 
+if (stkForm) {
+  stkForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (!stkPhone || !stkAmount) return;
+
+    const phoneValue = stkPhone.value.trim();
+    const amountValue = Number(stkAmount.value);
+
+    if (!isValidPhone(phoneValue)) {
+      showStkStatus("Enter a valid Kenyan phone number.", true);
+      return;
+    }
+
+    if (!amountValue || amountValue < 100) {
+      showStkStatus("Enter an amount of at least ₦100.", true);
+      return;
+    }
+
+    requestStkPush(phoneValue, amountValue);
+  });
+}
+
 renderProducts();
+
+
+
+
