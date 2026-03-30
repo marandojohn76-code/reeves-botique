@@ -1,0 +1,152 @@
+export interface Product {
+  id: number;
+  name: string;
+  price: number;
+  oldPrice?: number;
+  image: string;
+  category: string;
+  rating: number;
+  reviews: number;
+  badge?: string;
+}
+
+export const categories = [
+  "All",
+  "Women's Fashion",
+  "Men's Fashion",
+  "Shoes",
+  "Bags",
+  "Accessories",
+  "Beauty",
+  "Kids",
+];
+
+export const products: Product[] = [
+  {
+    id: 1,
+    name: "Floral Midi Dress",
+    price: 4500,
+    oldPrice: 7000,
+    image: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&q=80",
+    category: "Women's Fashion",
+    rating: 4.5,
+    reviews: 128,
+    badge: "35% off",
+  },
+  {
+    id: 2,
+    name: "Men's Slim Fit Suit",
+    price: 18000,
+    oldPrice: 25000,
+    image: "https://images.unsplash.com/photo-1594938298603-c8148c4b4e5b?w=400&q=80",
+    category: "Men's Fashion",
+    rating: 4.7,
+    reviews: 89,
+    badge: "Hot",
+  },
+  {
+    id: 3,
+    name: "Leather Ankle Boots",
+    price: 9500,
+    oldPrice: 13000,
+    image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&q=80",
+    category: "Shoes",
+    rating: 4.3,
+    reviews: 204,
+    badge: "27% off",
+  },
+  {
+    id: 4,
+    name: "Quilted Shoulder Bag",
+    price: 6200,
+    oldPrice: 8500,
+    image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80",
+    category: "Bags",
+    rating: 4.6,
+    reviews: 156,
+  },
+  {
+    id: 5,
+    name: "Gold Hoop Earrings",
+    price: 1800,
+    oldPrice: 2500,
+    image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&q=80",
+    category: "Accessories",
+    rating: 4.4,
+    reviews: 312,
+    badge: "New",
+  },
+  {
+    id: 6,
+    name: "Matte Lipstick Set",
+    price: 3200,
+    oldPrice: 4000,
+    image: "https://images.unsplash.com/photo-1586495777744-4e6232bf2f9b?w=400&q=80",
+    category: "Beauty",
+    rating: 4.8,
+    reviews: 445,
+    badge: "Best Seller",
+  },
+  {
+    id: 7,
+    name: "Kids Sneakers",
+    price: 3500,
+    oldPrice: 5000,
+    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80",
+    category: "Kids",
+    rating: 4.2,
+    reviews: 67,
+  },
+  {
+    id: 8,
+    name: "Wrap Maxi Skirt",
+    price: 3800,
+    oldPrice: 5500,
+    image: "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=400&q=80",
+    category: "Women's Fashion",
+    rating: 4.5,
+    reviews: 93,
+    badge: "31% off",
+  },
+  {
+    id: 9,
+    name: "Men's Polo Shirt",
+    price: 2800,
+    oldPrice: 3500,
+    image: "https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=400&q=80",
+    category: "Men's Fashion",
+    rating: 4.1,
+    reviews: 178,
+  },
+  {
+    id: 10,
+    name: "Strappy Heels",
+    price: 7200,
+    oldPrice: 10000,
+    image: "https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=400&q=80",
+    category: "Shoes",
+    rating: 4.6,
+    reviews: 221,
+    badge: "28% off",
+  },
+  {
+    id: 11,
+    name: "Tote Handbag",
+    price: 5500,
+    image: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=400&q=80",
+    category: "Bags",
+    rating: 4.3,
+    reviews: 134,
+    badge: "New",
+  },
+  {
+    id: 12,
+    name: "Silk Scarf",
+    price: 2200,
+    oldPrice: 3000,
+    image: "https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=400&q=80",
+    category: "Accessories",
+    rating: 4.7,
+    reviews: 88,
+  },
+];

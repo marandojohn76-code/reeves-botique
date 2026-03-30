@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Reeves Boutique replica shop page with featured deals, categories, and trending products." />
+    <meta name="theme-color" content="#f97316" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Reeves Boutique</title>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <div class="brand">
+          <span class="brand-name">Reeves</span>
+          <span class="brand-tag">Boutique</span>
+        </div>
+        <div class="header-actions">
+          <div class="search-box">
+            <input id="searchInput" type="search" placeholder="Search products, brands, and categories" />
+            <button id="searchButton">Search</button>
+          </div>
+          <div class="icons">
+            <button class="icon-button">Account</button>
+            <button class="icon-button">Wishlist</button>
+            <button class="icon-button">Cart <span id="cartCount">0</span></button>
+          </div>
+        </div>
+      </header>
+
+      <nav class="category-bar" id="categoryBar">
+        <button class="category-pill active" data-category="All">All</button>
+        <button class="category-pill" data-category="Women's Fashion">Women's Fashion</button>
+        <button class="category-pill" data-category="Men's Fashion">Men's Fashion</button>
+        <button class="category-pill" data-category="Shoes">Shoes</button>
+        <button class="category-pill" data-category="Bags">Bags</button>
+        <button class="category-pill" data-category="Accessories">Accessories</button>
+        <button class="category-pill" data-category="Beauty">Beauty</button>
+        <button class="category-pill" data-category="Kids">Kids</button>
+      </nav>
+
+      <main>
+        <section class="hero-banner">
+          <div class="hero-copy">
+            <span class="hero-label">Flash Deals</span>
+            <h1>Trendsetting styles for everyone.</h1>
+            <p>Shop exclusive offers from women's fashion, men's wear, shoes, bags and beauty products in one place.</p>
+            <div class="hero-actions">
+              <button class="primary-button">Shop Now</button>
+              <button class="secondary-button">View Offers</button>
+            </div>
+          </div>
+          <div class="hero-image">
+            <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=1200&q=80" alt="Fashion collection" />
+          </div>
+        </section>
+
+        <section class="top-deals">
+          <div class="section-header">
+            <h2>Top Deals</h2>
+            <span id="resultCount">12 items</span>
+          </div>
+          <div class="product-grid" id="productGrid"></div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <div class="footer-grid">
+          <div>
+            <h3>Reeves Boutique</h3>
+            <p>Shop the latest arrivals, unbeatable deals, and premium styles in one polished experience.</p>
+          </div>
+          <div>
+            <h3>Quick Links</h3>
+            <ul>
+              <li><a href="#">About Us</a></li>
+              <li><a href="#">Contact</a></li>
+              <li><a href="#">FAQ</a></li>
+              <li><a href="#">Track Order</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3>Categories</h3>
+            <ul>
+              <li><a href="#">Women's Fashion</a></li>
+              <li><a href="#">Men's Fashion</a></li>
+              <li><a href="#">Shoes</a></li>
+              <li><a href="#">Beauty</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3>Contact</h3>
+            <p>hello@reevesboutique.com</p>
+            <p>+234 800 000 0000</p>
+            <p>Lagos, Nigeria</p>
+          </div>
+        </div>
+        <div class="footer-note">© 2026 Reeves Boutique. All rights reserved.</div>
+      </footer>
+    </div>
+    <script defer src="script.js"></script>
+  </body>
+</html>
