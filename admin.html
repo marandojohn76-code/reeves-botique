@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Portal - Reeves Boutique</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- ===== LOGIN PAGE SECTION ===== -->
+    <div id="loginPage" class="admin-login-page">
+        <div class="login-container">
+            <div class="login-header">
+                <h1>Reeves Boutique</h1>
+                <h2>Admin Login</h2>
+                <p>Please enter your credentials to access the admin panel</p>
+            </div>
+
+            <form id="adminLoginForm" class="admin-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter your username"
+                        required
+                        autocomplete="username"
+                    />
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        required
+                        autocomplete="current-password"
+                    />
+                </div>
+
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+                <button type="submit" class="login-button">
+                    <span>Login</span>
+                </button>
+            </form>
+
+            <div class="forgot-password">
+                <a href="#" id="forgotPasswordLink">Forgot Password?</a>
+            </div>
+
+            <div class="login-footer">
+                <a href="index.html" class="back-link">← Back to Store</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FORGOT PASSWORD MODAL ===== -->
+    <div id="forgotPasswordModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Reset Password</h3>
+                <span class="close-modal" id="closeModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Enter your email address and we'll send you a reset code.</p>
+                <form id="forgotPasswordForm" class="forgot-form">
+                    <div class="form-group">
+                        <label for="resetEmail">Email Address</label>
+                        <input
+                            type="email"
+                            id="resetEmail"
+                            name="resetEmail"
+                            placeholder="admin@reevesboutique.com"
+                            required
+                        />
+                    </div>
+                    <div id="forgotErrorMessage" class="error-message" style="display: none;"></div>
+                    <div id="forgotSuccessMessage" class="success-message" style="display: none;"></div>
+                    <button type="submit" id="sendResetBtn" class="primary-button">
+                        <span>Send Reset Code</span>
+                    </button>
+                </form>
+
+                <!-- Reset Code Form (shown after email is sent) -->
+                <form id="resetCodeForm" class="reset-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="resetCode">Reset Code</label>
+                        <input
+                            type="text"
+                            id="resetCode"
+                            name="resetCode"
+                            placeholder="Enter 6-digit code"
+                            maxlength="6"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input
+                            type="password"
+                            id="newPassword"
+                            name="newPassword"
+                            placeholder="Enter new password"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmNewPassword">Confirm New Password</label>
+                        <input
+                            type="password"
+                            id="confirmNewPassword"
+                            name="confirmNewPassword"
+                            placeholder="Confirm new password"
+                            required
+                        />
+                    </div>
+                    <div id="resetErrorMessage" class="error-message" style="display: none;"></div>
+                    <div id="resetSuccessMessage" class="success-message" style="display: none;"></div>
+                    <button type="submit" id="resetPasswordBtn" class="primary-button">
+                        <span>Reset Password</span>
+                    </button>
+                    <button type="button" id="backToEmailBtn" class="secondary-button">
+                        Back
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== DASHBOARD PAGE SECTION ===== -->
+    <div id="dashboardPage" class="admin-dashboard-page" style="display: none;">
+        <header class="admin-header">
+            <div class="header-content">
+                <h1>Admin Dashboard</h1>
+                <div class="header-actions">
+                    <span id="currentTime" class="current-time"></span>
+                    <button id="logoutBtn" class="logout-btn">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <nav class="admin-nav">
+            <div class="nav-container">
+                <a href="#orders" class="nav-link active" data-section="orders">Orders</a>
+                <a href="#stk-push" class="nav-link" data-section="stk-push">STK Push</a>
+                <a href="#transactions" class="nav-link" data-section="transactions">Transactions</a>
+                <a href="#settings" class="nav-link" data-section="settings">Settings</a>
+            </div>
+        </nav>
+
+        <main class="admin-main">
+            <!-- Orders Section -->
+            <section id="orders" class="admin-section active">
+                <div class="section-header">
+                    <h2>Customer Orders</h2>
+                    <p>View items selected by customers and process payments</p>
+                </div>
+
+                <div class="orders-card">
+                    <div class="orders-filters">
+                        <select id="orderStatusFilter">
+                            <option value="all">All Orders</option>
+                            <option value="pending">Pending Payment</option>
+                            <option value="paid">Paid</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                        <input type="text" id="customerSearch" placeholder="Search by customer name or phone" />
+                        <button id="refreshOrdersBtn" class="filter-btn">Refresh</button>
+                    </div>
+
+                    <div id="ordersList" class="orders-list">
+                        <!-- Orders will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- STK Push Section -->
+            <section id="stk-push" class="admin-section">
+                <div class="section-header">
+                    <h2>Send STK Push Payment</h2>
+                    <p>Initiate STK Push payments to customer mobile numbers</p>
+                </div>
+
+                <div class="stk-push-card">
+                    <form id="stkPushForm" class="stk-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="customerPhone">Customer Phone Number</label>
+                                <input
+                                    type="tel"
+                                    id="customerPhone"
+                                    name="customerPhone"
+                                    placeholder="+254 712 345 678"
+                                    required
+                                />
+                                <small class="form-help">Enter the customer's Kenyan mobile number</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="paymentAmount">Amount (KSH)</label>
+                                <input
+                                    type="number"
+                                    id="paymentAmount"
+                                    name="paymentAmount"
+                                    placeholder="5000"
+                                    min="100"
+                                    step="100"
+                                    required
+                                />
+                                <small class="form-help">Minimum amount: KSH 100</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="paymentDescription">Description (Optional)</label>
+                            <input
+                                type="text"
+                                id="paymentDescription"
+                                name="paymentDescription"
+                                placeholder="Payment for order items"
+                                maxlength="100"
+                            />
+                        </div>
+
+                        <div id="stkErrorMessage" class="error-message" style="display: none;"></div>
+                        <div id="stkSuccessMessage" class="success-message" style="display: none;"></div>
+
+                        <button type="submit" id="sendStkBtn" class="primary-button">
+                            <span>Send STK Push</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Quick STK Push from Orders -->
+                <div class="quick-stk-section">
+                    <h3>Quick STK Push from Orders</h3>
+                    <p>Select an order above to quickly send STK Push to the customer</p>
+                    <div id="quickStkInfo" class="quick-stk-info" style="display: none;">
+                        <div class="selected-order-info">
+                            <h4>Selected Order</h4>
+                            <p id="selectedOrderDetails"></p>
+                            <button id="quickStkBtn" class="primary-button">Send STK Push for KSH <span id="quickStkAmount"></span></button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Transactions Section -->
+            <section id="transactions" class="admin-section">
+                <div class="section-header">
+                    <h2>Transaction History</h2>
+                    <p>View all payment transactions and their status</p>
+                </div>
+
+                <div class="transactions-card">
+                    <div class="transaction-filters">
+                        <select id="statusFilter">
+                            <option value="all">All Status</option>
+                            <option value="completed">Completed</option>
+                            <option value="pending">Pending</option>
+                            <option value="failed">Failed</option>
+                        </select>
+                        <input type="date" id="dateFilter" />
+                        <button id="filterBtn" class="filter-btn">Filter</button>
+                    </div>
+
+                    <div id="transactionsList" class="transactions-list">
+                        <div class="empty-state">
+                            <p>No transactions found</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="admin-section">
+                <div class="section-header">
+                    <h2>Admin Settings</h2>
+                    <p>Configure admin preferences and system settings</p>
+                </div>
+
+                <div class="settings-card">
+                    <form id="settingsForm" class="settings-form">
+                        <div class="setting-group">
+                            <h3>Security Settings</h3>
+                            <div class="form-group">
+                                <label for="currentPassword">Current Password</label>
+                                <input type="password" id="currentPassword" />
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword2">New Password</label>
+                                <input type="password" id="newPassword2" />
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm New Password</label>
+                                <input type="password" id="confirmPassword" />
+                            </div>
+                            <button type="button" class="secondary-button">Change Password</button>
+                        </div>
+
+                        <div class="setting-group">
+                            <h3>Notification Settings</h3>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="emailNotifications" checked />
+                                    Email notifications for failed payments
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="smsNotifications" />
+                                    SMS notifications for successful payments
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="primary-button">Save Settings</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Combined Scripts -->
+    <script>
+        // ===== COMBINED ADMIN SCRIPT =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements - Login
+            const loginPage = document.getElementById('loginPage');
+            const dashboardPage = document.getElementById('dashboardPage');
+            const adminLoginForm = document.getElementById('adminLoginForm');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const errorMessage = document.getElementById('errorMessage');
+            const loginButton = document.querySelector('.login-button');
+
+            // Forgot password elements
+            const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+            const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+            const closeModal = document.getElementById('closeModal');
+            const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+            const resetCodeForm = document.getElementById('resetCodeForm');
+            const sendResetBtn = document.getElementById('sendResetBtn');
+            const resetPasswordBtn = document.getElementById('resetPasswordBtn');
+            const backToEmailBtn = document.getElementById('backToEmailBtn');
+
+            // DOM Elements - Dashboard
+            const logoutBtn = document.getElementById('logoutBtn');
+            const currentTime = document.getElementById('currentTime');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const adminSections = document.querySelectorAll('.admin-section');
+
+            // Orders Elements
+            const ordersList = document.getElementById('ordersList');
+            const orderStatusFilter = document.getElementById('orderStatusFilter');
+            const customerSearch = document.getElementById('customerSearch');
+            const refreshOrdersBtn = document.getElementById('refreshOrdersBtn');
+
+            // STK Push Elements
+            const stkPushForm = document.getElementById('stkPushForm');
+            const customerPhone = document.getElementById('customerPhone');
+            const paymentAmount = document.getElementById('paymentAmount');
+            const paymentDescription = document.getElementById('paymentDescription');
+            const sendStkBtn = document.getElementById('sendStkBtn');
+            const stkErrorMessage = document.getElementById('stkErrorMessage');
+            const stkSuccessMessage = document.getElementById('stkSuccessMessage');
+
+            // Quick STK Push Elements
+            const quickStkInfo = document.getElementById('quickStkInfo');
+            const selectedOrderDetails = document.getElementById('selectedOrderDetails');
+            const quickStkAmount = document.getElementById('quickStkAmount');
+            const quickStkBtn = document.getElementById('quickStkBtn');
+
+            // Admin credentials
+            const ADMIN_CREDENTIALS = {
+                username: 'admin',
+                password: 'reeves001!'
+            };
+
+            // Initialize
+            initializeApp();
+
+            function initializeApp() {
+                if (isAdminLoggedIn()) {
+                    showDashboard();
+                    initializeDashboard();
+                } else {
+                    showLoginPage();
+                }
+            }
+
+            function isAdminLoggedIn() {
+                return sessionStorage.getItem('adminLoggedIn') === 'true';
+            }
+
+            function showLoginPage() {
+                loginPage.style.display = 'flex';
+                dashboardPage.style.display = 'none';
+                usernameInput.focus();
+            }
+
+            function showDashboard() {
+                loginPage.style.display = 'none';
+                dashboardPage.style.display = 'block';
+                updateCurrentTime();
+                loadOrders();
+            }
+
+            // ===== LOGIN EVENT LISTENERS =====
+            adminLoginForm.addEventListener('submit', handleLogin);
+            usernameInput.addEventListener('input', () => { errorMessage.style.display = 'none'; });
+            passwordInput.addEventListener('input', () => { errorMessage.style.display = 'none'; });
+            forgotPasswordLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                forgotPasswordModal.style.display = 'block';
+                document.getElementById('resetEmail').focus();
+            });
+            closeModal.addEventListener('click', closeForgotPasswordModal);
+            forgotPasswordForm.addEventListener('submit', handleForgotPassword);
+            resetCodeForm.addEventListener('submit', handleResetPassword);
+            backToEmailBtn.addEventListener('click', () => {
+                forgotPasswordForm.style.display = 'block';
+                resetCodeForm.style.display = 'none';
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === forgotPasswordModal) {
+                    closeForgotPasswordModal();
+                }
+            });
+
+            // ===== DASHBOARD EVENT LISTENERS =====
+            logoutBtn.addEventListener('click', handleLogout);
+            navLinks.forEach(link => link.addEventListener('click', handleNavClick));
+            stkPushForm.addEventListener('submit', handleStkPush);
+            quickStkBtn.addEventListener('click', handleQuickStkPush);
+            orderStatusFilter.addEventListener('change', filterOrders);
+            customerSearch.addEventListener('input', filterOrders);
+            refreshOrdersBtn.addEventListener('click', loadOrders);
+
+            setInterval(updateCurrentTime, 60000);
+
+            // ===== LOGIN FUNCTIONS =====
+            function handleLogin(event) {
+                event.preventDefault();
+                const username = usernameInput.value.trim();
+                const password = passwordInput.value.trim();
+
+                if (!username || !password) {
+                    showLoginError('Please enter both username and password');
+                    return;
+                }
+
+                loginButton.disabled = true;
+                loginButton.innerHTML = '<span>Logging in...</span>';
+
+                setTimeout(() => {
+                    if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                        sessionStorage.setItem('adminLoggedIn', 'true');
+                        sessionStorage.setItem('adminLoginTime', new Date().toISOString());
+                        showDashboard();
+                        initializeDashboard();
+                    } else {
+                        showLoginError('Invalid username or password');
+                    }
+                }, 1000);
+            }
+
+            function showLoginError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+                loginButton.disabled = false;
+                loginButton.innerHTML = '<span>Login</span>';
+            }
+
+            function handleLogout() {
+                if (confirm('Are you sure you want to logout?')) {
+                    sessionStorage.removeItem('adminLoggedIn');
+                    sessionStorage.removeItem('adminLoginTime');
+                    adminLoginForm.reset();
+                    showLoginPage();
+                }
+            }
+
+            function closeForgotPasswordModal() {
+                forgotPasswordModal.style.display = 'none';
+                forgotPasswordForm.reset();
+                resetCodeForm.reset();
+                forgotPasswordForm.style.display = 'block';
+                resetCodeForm.style.display = 'none';
+            }
+
+            function handleForgotPassword(event) {
+                event.preventDefault();
+                const email = document.getElementById('resetEmail').value.trim();
+                const forgotErrorMessage = document.getElementById('forgotErrorMessage');
+                const forgotSuccessMessage = document.getElementById('forgotSuccessMessage');
+
+                forgotErrorMessage.style.display = 'none';
+                forgotSuccessMessage.style.display = 'none';
+
+                if (!email) {
+                    forgotErrorMessage.textContent = 'Please enter your email address';
+                    forgotErrorMessage.style.display = 'block';
+                    return;
+                }
+
+                sendResetBtn.disabled = true;
+                sendResetBtn.innerHTML = '<span>Sending...</span>';
+
+                setTimeout(() => {
+                    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+                    localStorage.setItem('resetCode', resetCode);
+                    localStorage.setItem('resetEmail', email);
+                    localStorage.setItem('resetCodeExpiry', Date.now() + 300000);
+
+                    forgotSuccessMessage.textContent = `Reset code sent to ${email}`;
+                    forgotSuccessMessage.style.display = 'block';
+
+                    setTimeout(() => {
+                        forgotPasswordForm.style.display = 'none';
+                        resetCodeForm.style.display = 'block';
+                        document.getElementById('resetCode').focus();
+                    }, 2000);
+                }, 1500);
+            }
+
+            function handleResetPassword(event) {
+                event.preventDefault();
+                const code = document.getElementById('resetCode').value.trim();
+                const newPass = document.getElementById('newPassword').value.trim();
+                const confirmPass = document.getElementById('confirmNewPassword').value.trim();
+                const resetErrorMessage = document.getElementById('resetErrorMessage');
+                const resetSuccessMessage = document.getElementById('resetSuccessMessage');
+
+                resetErrorMessage.style.display = 'none';
+                resetSuccessMessage.style.display = 'none';
+
+                if (!code || code.length !== 6 || !/^\d{6}$/.test(code)) {
+                    resetErrorMessage.textContent = 'Please enter a valid 6-digit reset code';
+                    resetErrorMessage.style.display = 'block';
+                    return;
+                }
+
+                if (!newPass || newPass.length < 6) {
+                    resetErrorMessage.textContent = 'Password must be at least 6 characters long';
+                    resetErrorMessage.style.display = 'block';
+                    return;
+                }
+
+                if (newPass !== confirmPass) {
+                    resetErrorMessage.textContent = 'Passwords do not match';
+                    resetErrorMessage.style.display = 'block';
+                    return;
+                }
+
+                const storedCode = localStorage.getItem('resetCode');
+                if (code !== storedCode) {
+                    resetErrorMessage.textContent = 'Invalid reset code';
+                    resetErrorMessage.style.display = 'block';
+                    return;
+                }
+
+                resetPasswordBtn.disabled = true;
+                resetPasswordBtn.innerHTML = '<span>Resetting...</span>';
+
+                setTimeout(() => {
+                    ADMIN_CREDENTIALS.password = newPass;
+                    localStorage.removeItem('resetCode');
+                    localStorage.removeItem('resetEmail');
+                    localStorage.removeItem('resetCodeExpiry');
+
+                    resetSuccessMessage.textContent = 'Password reset successfully! You can now login with your new password.';
+                    resetSuccessMessage.style.display = 'block';
+
+                    setTimeout(() => {
+                        closeForgotPasswordModal();
+                    }, 3000);
+                }, 1500);
+            }
+
+            // ===== DASHBOARD FUNCTIONS =====
+            function initializeDashboard() {
+                loadOrders();
+            }
+
+            function updateCurrentTime() {
+                const now = new Date();
+                currentTime.textContent = now.toLocaleString();
+            }
+
+            function handleNavClick(event) {
+                event.preventDefault();
+                const sectionId = event.target.dataset.section;
+
+                navLinks.forEach(link => link.classList.remove('active'));
+                event.target.classList.add('active');
+
+                adminSections.forEach(section => section.classList.remove('active'));
+                document.getElementById(sectionId).classList.add('active');
+            }
+
+            function loadOrders() {
+                // Load customer orders from localStorage
+                const customerOrders = JSON.parse(localStorage.getItem('customerOrders') || '[]');
+                
+                // Keep existing mock orders for demo + new customer orders
+                const mockOrders = [
+                    {
+                        id: 'ORD001',
+                        customerName: 'John Doe',
+                        customerPhone: '+254712345678',
+                        items: [
+                            { name: 'Designer Dress', price: 2500, quantity: 1 },
+                            { name: 'High Heels', price: 1800, quantity: 1 }
+                        ],
+                        total: 4300,
+                        status: 'pending',
+                        date: '2024-01-15T10:30:00Z',
+                        shipmentStatus: 'order_confirmed'
+                    },
+                    {
+                        id: 'ORD002',
+                        customerName: 'Jane Smith',
+                        customerPhone: '+254723456789',
+                        items: [
+                            { name: 'Leather Handbag', price: 3200, quantity: 1 },
+                            { name: 'Sunglasses', price: 1200, quantity: 1 }
+                        ],
+                        total: 4400,
+                        status: 'paid',
+                        date: '2024-01-14T14:20:00Z',
+                        shipmentStatus: 'shipped'
+                    },
+                    {
+                        id: 'ORD003',
+                        customerName: 'Alice Johnson',
+                        customerPhone: '+254734567890',
+                        items: [
+                            { name: 'Winter Coat', price: 4500, quantity: 1 }
+                        ],
+                        total: 4500,
+                        status: 'pending',
+                        date: '2024-01-15T09:15:00Z',
+                        shipmentStatus: 'processing'
+                    }
+                ];
+                
+                // Combine mock orders with customer orders (customer orders first)
+                const allOrders = [...customerOrders, ...mockOrders];
+                
+                localStorage.setItem('customerOrders', JSON.stringify(allOrders));
+                displayOrders(allOrders);
+            }
+
+            function displayOrders(orders) {
+                if (orders.length === 0) {
+                    ordersList.innerHTML = '<div class="empty-state"><p>No orders found</p></div>';
+                    return;
+                }
+
+                const ordersHtml = orders.map(order => {
+                    const shipmentSteps = {
+                        'order_confirmed': 0,
+                        'processing': 1,
+                        'shipped': 2,
+                        'out_for_delivery': 3,
+                        'delivered': 4
+                    };
+                    const shipmentStep = shipmentSteps[order.shipmentStatus] || 0;
+                    
+                    return `
+                    <div class="order-card" data-order-id="${order.id}">
+                        <div class="order-header">
+                            <div class="order-info">
+                                <h4>Order #${order.id}</h4>
+                                <p class="customer-name">${order.customerName || 'Customer'}</p>
+                                <p class="customer-phone">${order.customerPhone || 'N/A'}</p>
+                                <p class="order-date">${new Date(order.date || order.createdAt).toLocaleString()}</p>
+                            </div>
+                            <div class="order-status status-${order.status}">
+                                ${order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                            </div>
+                        </div>
+                        
+                        <div class="order-items">
+                            ${order.items ? order.items.map(item => `
+                                <div class="order-item">
+                                    <span>${item.name} (x${item.quantity || 1})</span>
+                                    <span>KSH ${(item.price || order.price).toLocaleString()}</span>
+                                </div>
+                            `).join('') : `
+                                <div class="order-item">
+                                    <span>${order.productName}</span>
+                                    <span>KSH ${order.price.toLocaleString()}</span>
+                                </div>
+                            `}
+                        </div>
+                        
+                        <div class="order-total">
+                            <strong>Total: KSH ${(order.total || order.price).toLocaleString()}</strong>
+                        </div>
+                        
+                        <div class="shipment-status-admin">
+                            <h5>Shipment Status</h5>
+                            <div class="shipment-mini-tracker">
+                                <div class="shipment-mini-step ${shipmentStep >= 0 ? 'active' : ''}">✓</div>
+                                <div class="shipment-mini-step ${shipmentStep >= 1 ? 'active' : ''}">📍</div>
+                                <div class="shipment-mini-step ${shipmentStep >= 2 ? 'active' : ''}">🚚</div>
+                                <div class="shipment-mini-step ${shipmentStep >= 3 ? 'active' : ''}">📦</div>
+                                <div class="shipment-mini-step ${shipmentStep >= 4 ? 'active' : ''}">✔</div>
+                            </div>
+                            <div class="shipment-controls">
+                                ${shipmentStep < 1 ? `<button class="shipment-btn" onclick="updateShipmentStatus('${order.id}', 'processing')">→ Processing</button>` : ''}
+                                ${shipmentStep < 2 && shipmentStep >= 1 ? `<button class="shipment-btn" onclick="updateShipmentStatus('${order.id}', 'shipped')">→ Shipped</button>` : ''}
+                                ${shipmentStep < 3 && shipmentStep >= 2 ? `<button class="shipment-btn" onclick="updateShipmentStatus('${order.id}', 'out_for_delivery')">→ Out for Delivery</button>` : ''}
+                                ${shipmentStep < 4 && shipmentStep >= 3 ? `<button class="shipment-btn" onclick="updateShipmentStatus('${order.id}', 'delivered')">→ Delivered</button>` : ''}
+                                ${shipmentStep >= 4 ? `<span class="shipment-complete">✓ Delivered</span>` : ''}
+                            </div>
+                        </div>
+                        
+                        <div class="order-actions">
+                            ${order.status === 'pending' ?
+                                `<button class="select-order-btn primary-button" data-order='${JSON.stringify(order)}'>
+                                    Select for STK Push
+                                </button>` : ''
+                            }
+                        </div>
+                    </div>
+                `;
+                }).join('');
+
+                ordersList.innerHTML = ordersHtml;
+
+                document.querySelectorAll('.select-order-btn').forEach(btn => {
+                    btn.addEventListener('click', handleOrderSelection);
+                });
+            }
+            
+            function updateShipmentStatus(orderId, newStatus) {
+                const allOrders = JSON.parse(localStorage.getItem('customerOrders') || '[]');
+                const orderIndex = allOrders.findIndex(o => o.id === orderId);
+                
+                if (orderIndex !== -1) {
+                    allOrders[orderIndex].shipmentStatus = newStatus;
+                    localStorage.setItem('customerOrders', JSON.stringify(allOrders));
+                    loadOrders();
+                }
+            }
+
+            function filterOrders() {
+                const statusFilter = orderStatusFilter.value;
+                const searchTerm = customerSearch.value.toLowerCase();
+
+                const allOrders = JSON.parse(localStorage.getItem('customerOrders') || '[]');
+                let filteredOrders = allOrders;
+
+                if (statusFilter !== 'all') {
+                    filteredOrders = filteredOrders.filter(order => order.status === statusFilter);
+                }
+
+                if (searchTerm) {
+                    filteredOrders = filteredOrders.filter(order =>
+                        order.customerName.toLowerCase().includes(searchTerm) ||
+                        order.customerPhone.includes(searchTerm)
+                    );
+                }
+
+                displayOrders(filteredOrders);
+            }
+
+            function handleOrderSelection(event) {
+                const orderData = JSON.parse(event.target.dataset.order);
+                
+                // Handle both old format (items array) and new format (single product)
+                const itemsCount = orderData.items ? orderData.items.length : 1;
+                const itemsSummary = orderData.items ? 
+                    orderData.items.map(i => i.name).join(', ') : 
+                    orderData.productName;
+
+                selectedOrderDetails.innerHTML = `
+                    <strong>Customer:</strong> ${orderData.customerName || 'Customer'}<br>
+                    <strong>Phone:</strong> ${orderData.customerPhone || 'N/A'}<br>
+                    <strong>Items:</strong> ${itemsSummary}<br>
+                    <strong>Items Count:</strong> ${itemsCount}<br>
+                    <strong>Total:</strong> KSH ${(orderData.total || orderData.price).toLocaleString()}
+                `;
+
+                quickStkAmount.textContent = (orderData.total || orderData.price).toLocaleString();
+                quickStkBtn.dataset.order = JSON.stringify(orderData);
+
+                quickStkInfo.style.display = 'block';
+                document.getElementById('stk-push').scrollIntoView({ behavior: 'smooth' });
+
+                document.querySelector('[data-section="stk-push"]').click();
+            }
+
+            function handleQuickStkPush() {
+                const orderData = JSON.parse(quickStkBtn.dataset.order);
+
+                customerPhone.value = orderData.customerPhone || '';
+                paymentAmount.value = orderData.total || orderData.price;
+                paymentDescription.value = `Payment for Order #${orderData.id}`;
+
+                stkPushForm.dispatchEvent(new Event('submit'));
+            }
+
+            function handleStkPush(event) {
+                event.preventDefault();
+
+                const phone = customerPhone.value.trim();
+                const amount = parseFloat(paymentAmount.value);
+                const description = paymentDescription.value.trim();
+
+                stkErrorMessage.style.display = 'none';
+                stkSuccessMessage.style.display = 'none';
+
+                if (!validatePhoneNumber(phone)) {
+                    stkErrorMessage.textContent = 'Please enter a valid Kenyan phone number';
+                    stkErrorMessage.style.display = 'block';
+                    return;
+                }
+
+                if (isNaN(amount) || amount < 100) {
+                    stkErrorMessage.textContent = 'Please enter an amount of at least KSH 100';
+                    stkErrorMessage.style.display = 'block';
+                    return;
+                }
+
+                sendStkBtn.disabled = true;
+                sendStkBtn.innerHTML = '<span>Sending...</span>';
+
+                setTimeout(() => {
+                    const formattedPhone = formatPhoneNumber(phone);
+                    const transactionId = 'TXN' + Date.now();
+
+                    const transaction = {
+                        id: transactionId,
+                        phone: formattedPhone,
+                        amount: amount,
+                        description: description || 'STK Push Payment',
+                        timestamp: new Date().toISOString(),
+                        status: 'sent'
+                    };
+
+                    saveTransaction(transaction);
+
+                    stkSuccessMessage.textContent = `STK Push sent successfully to ${formattedPhone} for KSH ${amount.toLocaleString()}`;
+                    stkSuccessMessage.style.display = 'block';
+                    sendStkBtn.disabled = false;
+                    sendStkBtn.innerHTML = '<span>Send STK Push</span>';
+
+                    stkPushForm.reset();
+                }, 2000);
+            }
+
+            function saveTransaction(transaction) {
+                const transactions = JSON.parse(localStorage.getItem('stkTransactions') || '[]');
+                transactions.unshift(transaction);
+                if (transactions.length > 50) transactions.splice(50);
+                localStorage.setItem('stkTransactions', JSON.stringify(transactions));
+            }
+
+            function validatePhoneNumber(phone) {
+                const digits = phone.replace(/\D/g, '');
+                return /^(?:254|0)7\d{8}$/.test(digits);
+            }
+
+            function formatPhoneNumber(phone) {
+                const digits = phone.replace(/\D/g, '');
+                if (digits.startsWith('254')) return '+' + digits;
+                if (digits.startsWith('0')) return '+254' + digits.slice(1);
+                return '+' + digits;
+            }
+        });
+    </script>
+</body>
+</html>

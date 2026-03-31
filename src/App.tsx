@@ -4,12 +4,16 @@ import Banner from "./components/Banner";
 import CategoryBar from "./components/CategoryBar";
 import ProductCard from "./components/ProductCard";
 import Footer from "./components/Footer";
+import AdminLogin from "./components/AdminLogin";
+import AdminDashboard from "./components/AdminDashboard";
 import { products } from "./data/products";
 
 export default function App() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [cartCount, setCartCount] = useState(0);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
 
   const filtered = products.filter((p) => {
     const matchCat = activeCategory === "All" || p.category === activeCategory;
@@ -17,9 +21,21 @@ export default function App() {
     return matchCat && matchSearch;
   });
 
+  if (showAdminLogin && !isAdmin) {
+    return <AdminLogin onLogin={setIsAdmin} onCancel={() => setShowAdminLogin(false)} />;
+  }
+
+  if (isAdmin) {
+    return <AdminDashboard onLogout={() => setIsAdmin(false)} />;
+  }
+
   return (
     <div className="app">
-      <Navbar cartCount={cartCount} onSearch={setSearchQuery} />
+      <Navbar
+        cartCount={cartCount}
+        onSearch={setSearchQuery}
+        onAdminClick={() => setShowAdminLogin(true)}
+      />
       <Banner />
 
       <main className="main-content">

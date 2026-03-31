@@ -3,9 +3,10 @@ import { useState } from "react";
 interface NavbarProps {
   cartCount: number;
   onSearch: (q: string) => void;
+  onAdminClick: () => void;
 }
 
-export default function Navbar({ cartCount, onSearch }: NavbarProps) {
+export default function Navbar({ cartCount, onSearch, onAdminClick }: NavbarProps) {
   const [query, setQuery] = useState("");
 
   return (
@@ -28,6 +29,10 @@ export default function Navbar({ cartCount, onSearch }: NavbarProps) {
         </div>
 
         <div className="nav-actions">
+          <button className="nav-btn" onClick={onAdminClick}>
+            <span>⚙️</span>
+            <small>Admin</small>
+          </button>
           <button className="nav-btn">
             <span>👤</span>
             <small>Account</small>

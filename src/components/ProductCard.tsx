@@ -30,9 +30,9 @@ export default function ProductCard({ product, onAddToCart }: Props) {
       <div className="product-info">
         <p className="product-name">{product.name}</p>
         <div className="product-pricing">
-          <span className="product-price">₦{product.price.toLocaleString()}</span>
+          <span className="product-price">KSH {product.price.toLocaleString()}</span>
           {product.oldPrice && (
-            <span className="product-old-price">₦{product.oldPrice.toLocaleString()}</span>
+            <span className="product-old-price">KSH {product.oldPrice.toLocaleString()}</span>
           )}
           {discount && <span className="product-discount">-{discount}%</span>}
         </div>
@@ -41,7 +41,7 @@ export default function ProductCard({ product, onAddToCart }: Props) {
           <span className="product-reviews">({product.reviews})</span>
         </div>
         <button className="add-to-cart" onClick={onAddToCart}>
-          Add to Cart
+          Order Now
         </button>
       </div>
     </div>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Reeves Boutique</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="admin-dashboard-page">
+        <header class="admin-header">
+            <div class="header-content">
+                <h1>Admin Dashboard</h1>
+                <div class="header-actions">
+                    <span id="currentTime" class="current-time"></span>
+                    <button id="logoutBtn" class="logout-btn">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <nav class="admin-nav">
+            <div class="nav-container">
+                <a href="#orders" class="nav-link active" data-section="orders">Orders</a>
+                <a href="#stk-push" class="nav-link" data-section="stk-push">STK Push</a>
+                <a href="#transactions" class="nav-link" data-section="transactions">Transactions</a>
+                <a href="#settings" class="nav-link" data-section="settings">Settings</a>
+            </div>
+        </nav>
+
+        <main class="admin-main">
+            <!-- Orders Section -->
+            <section id="orders" class="admin-section active">
+                <div class="section-header">
+                    <h2>Customer Orders</h2>
+                    <p>View items selected by customers and process payments</p>
+                </div>
+
+                <div class="orders-card">
+                    <div class="orders-filters">
+                        <select id="orderStatusFilter">
+                            <option value="all">All Orders</option>
+                            <option value="pending">Pending Payment</option>
+                            <option value="paid">Paid</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                        <input type="text" id="customerSearch" placeholder="Search by customer name or phone" />
+                        <button id="refreshOrdersBtn" class="filter-btn">Refresh</button>
+                    </div>
+
+                    <div id="ordersList" class="orders-list">
+                        <!-- Orders will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- STK Push Section -->
+            <section id="stk-push" class="admin-section">
+                <div class="section-header">
+                    <h2>Send STK Push Payment</h2>
+                    <p>Initiate STK Push payments to customer mobile numbers</p>
+                </div>
+
+                <div class="stk-push-card">
+                    <form id="stkPushForm" class="stk-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="customerPhone">Customer Phone Number</label>
+                                <input
+                                    type="tel"
+                                    id="customerPhone"
+                                    name="customerPhone"
+                                    placeholder="+254 712 345 678"
+                                    required
+                                />
+                                <small class="form-help">Enter the customer's Kenyan mobile number</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="paymentAmount">Amount (KSH)</label>
+                                <input
+                                    type="number"
+                                    id="paymentAmount"
+                                    name="paymentAmount"
+                                    placeholder="5000"
+                                    min="100"
+                                    step="100"
+                                    required
+                                />
+                                <small class="form-help">Minimum amount: KSH 100</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="paymentDescription">Description (Optional)</label>
+                            <input
+                                type="text"
+                                id="paymentDescription"
+                                name="paymentDescription"
+                                placeholder="Payment for order items"
+                                maxlength="100"
+                            />
+                        </div>
+
+                        <div id="stkErrorMessage" class="error-message" style="display: none;"></div>
+                        <div id="stkSuccessMessage" class="success-message" style="display: none;"></div>
+
+                        <button type="submit" id="sendStkBtn" class="primary-button">
+                            <span>Send STK Push</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Quick STK Push from Orders -->
+                <div class="quick-stk-section">
+                    <h3>Quick STK Push from Orders</h3>
+                    <p>Select an order above to quickly send STK Push to the customer</p>
+                    <div id="quickStkInfo" class="quick-stk-info" style="display: none;">
+                        <div class="selected-order-info">
+                            <h4>Selected Order</h4>
+                            <p id="selectedOrderDetails"></p>
+                            <button id="quickStkBtn" class="primary-button">Send STK Push for KSH <span id="quickStkAmount"></span></button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Transactions Section -->
+            <section id="transactions" class="admin-section">
+                <div class="section-header">
+                    <h2>Transaction History</h2>
+                    <p>View all payment transactions and their status</p>
+                </div>
+
+                <div class="transactions-card">
+                    <div class="transaction-filters">
+                        <select id="statusFilter">
+                            <option value="all">All Status</option>
+                            <option value="completed">Completed</option>
+                            <option value="pending">Pending</option>
+                            <option value="failed">Failed</option>
+                        </select>
+                        <input type="date" id="dateFilter" />
+                        <button id="filterBtn" class="filter-btn">Filter</button>
+                    </div>
+
+                    <div id="transactionsList" class="transactions-list">
+                        <div class="empty-state">
+                            <p>No transactions found</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="admin-section">
+                <div class="section-header">
+                    <h2>Admin Settings</h2>
+                    <p>Configure admin preferences and system settings</p>
+                </div>
+
+                <div class="settings-card">
+                    <form id="settingsForm" class="settings-form">
+                        <div class="setting-group">
+                            <h3>Security Settings</h3>
+                            <div class="form-group">
+                                <label for="currentPassword">Current Password</label>
+                                <input type="password" id="currentPassword" />
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword">New Password</label>
+                                <input type="password" id="newPassword" />
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm New Password</label>
+                                <input type="password" id="confirmPassword" />
+                            </div>
+                            <button type="button" class="secondary-button">Change Password</button>
+                        </div>
+
+                        <div class="setting-group">
+                            <h3>Notification Settings</h3>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="emailNotifications" checked />
+                                    Email notifications for failed payments
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="smsNotifications" />
+                                    SMS notifications for successful payments
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="primary-button">Save Settings</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="admin-dashboard-script.js"></script>
+</body>
+</html>
