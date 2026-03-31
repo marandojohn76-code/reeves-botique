@@ -677,32 +677,7 @@ function renderProducts() {
     `;
     const addButton = card.querySelector(".add-to-cart");
     addButton.addEventListener("click", () => {
-    
-      const order = {
-        id: 'ORD-' + Date.now(),
-        productId: product.id,
-        productName: product.name,
-        productImage: product.image,
-        price: product.price,
-        status: 'pending',
-        createdAt: new Date().toISOString(),
-        shipmentStatus: 'order_confirmed',
-        customerEmail: 'customer@example.com',
-        phone: ''
-      };
-      
-      
-      const existingOrders = JSON.parse(localStorage.getItem('customerOrders') || '[]');
-      existingOrders.unshift(order);
-      localStorage.setItem('customerOrders', JSON.stringify(existingOrders));
-      
-      
-      showOrderConfirmation(order);
-      
-      cartTotal += 1;
-      cartCount.textContent = cartTotal;
-      addButton.textContent = "Order Placed ✓";
-      addButton.disabled = true;
+      showCustomerForm(product, addButton);
     });
     productGrid.appendChild(card);
   });
@@ -779,7 +754,92 @@ function showOrderConfirmation(order) {
   }, 8000);
 }
 
-searchButton.addEventListener("click", renderProducts);
+function showCustomerForm(product, addButton) {
+  const modal = document.createElement('div');
+  modal.className = 'order-confirmation-modal';
+  modal.innerHTML = `
+    <div class="order-modal-content">
+      <div class="order-header">
+        <h2>Complete Your Order</h2>
+        <p>Enter your details to place the order</p>
+      </div>
+      <div class="product-confirmation">
+        <img src="${product.image}" alt="${product.name}" />
+        <div>
+          <h3>${product.name}</h3>
+          <p class="order-price">${formatPrice(product.price)}</p>
+          <p style="font-size:0.85rem;color:#6b7280">${product.category}</p>
+        </div>
+      </div>
+      <form id="customerOrderForm" style="display:grid;gap:14px;margin-top:16px">
+        <div class="form-field">
+          <label style="display:block;margin-bottom:6px;font-weight:600">Full Name *</label>
+          <input id="custName" type="text" placeholder="e.g. Jane Wanjiku" required
+            style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:10px;font-size:1rem" />
+        </div>
+        <div class="form-field">
+          <label style="display:block;margin-bottom:6px;font-weight:600">Phone Number *</label>
+          <input id="custPhone" type="tel" placeholder="e.g. 0712345678" required
+            style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:10px;font-size:1rem" />
+        </div>
+        <div class="form-field">
+          <label style="display:block;margin-bottom:6px;font-weight:600">Email (optional)</label>
+          <input id="custEmail" type="email" placeholder="e.g. jane@email.com"
+            style="width:100%;padding:12px;border:1px solid #d1d5db;border-radius:10px;font-size:1rem" />
+        </div>
+        <div id="custFormError" style="color:#dc2626;font-size:0.9rem;display:none"></div>
+        <button type="submit" class="primary-button" style="margin-top:4px">Confirm Order — ${formatPrice(product.price)}</button>
+        <button type="button" class="secondary-button" onclick="this.closest('.order-confirmation-modal').remove()">Cancel</button>
+      </form>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  modal.querySelector('#customerOrderForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const name = modal.querySelector('#custName').value.trim();
+    const phone = modal.querySelector('#custPhone').value.trim();
+    const email = modal.querySelector('#custEmail').value.trim();
+    const errEl = modal.querySelector('#custFormError');
+
+    if (!name) { errEl.textContent = 'Please enter your name'; errEl.style.display = 'block'; return; }
+    if (!phone || !/^(?:0|254|\+254)7\d{8}$/.test(phone.replace(/\s/g, ''))) {
+      errEl.textContent = 'Please enter a valid Kenyan phone number'; errEl.style.display = 'block'; return;
+    }
+
+    const order = {
+      id: 'ORD-' + Date.now(),
+      productId: product.id,
+      productName: product.name,
+      productImage: product.image,
+      productCategory: product.category,
+      price: product.price,
+      total: product.price,
+      customerName: name,
+      customerPhone: phone,
+      customerEmail: email || '',
+      items: [{ name: product.name, price: product.price, quantity: 1, image: product.image }],
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      date: new Date().toISOString(),
+      shipmentStatus: 'order_confirmed'
+    };
+
+    const existingOrders = JSON.parse(localStorage.getItem('customerOrders') || '[]');
+    existingOrders.unshift(order);
+    localStorage.setItem('customerOrders', JSON.stringify(existingOrders));
+
+    modal.remove();
+    showOrderConfirmation(order);
+
+    cartTotal += 1;
+    cartCount.textContent = cartTotal;
+    addButton.textContent = 'Order Placed ✓';
+    addButton.disabled = true;
+  });
+}
+
+
 searchInput.addEventListener("keydown", (event) => {
   if (event.key === "Enter") {
     renderProducts();

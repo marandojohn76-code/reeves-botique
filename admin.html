@@ -587,137 +587,83 @@
             }
 
             function loadOrders() {
-            
-                const customerOrders = JSON.parse(localStorage.getItem('customerOrders') || '[]');
-                
-    
-                const mockOrders = [
-                    {
-                        id: 'ORD001',
-                        customerName: 'John Doe',
-                        customerPhone: '+254712345678',
-                        items: [
-                            { name: 'Designer Dress', price: 2500, quantity: 1 },
-                            { name: 'High Heels', price: 1800, quantity: 1 }
-                        ],
-                        total: 4300,
-                        status: 'pending',
-                        date: '2024-01-15T10:30:00Z',
-                        shipmentStatus: 'order_confirmed'
-                    },
-                    {
-                        id: 'ORD002',
-                        customerName: 'Jane Smith',
-                        customerPhone: '+254723456789',
-                        items: [
-                            { name: 'Leather Handbag', price: 3200, quantity: 1 },
-                            { name: 'Sunglasses', price: 1200, quantity: 1 }
-                        ],
-                        total: 4400,
-                        status: 'paid',
-                        date: '2024-01-14T14:20:00Z',
-                        shipmentStatus: 'shipped'
-                    },
-                    {
-                        id: 'ORD003',
-                        customerName: 'Alice Johnson',
-                        customerPhone: '+254734567890',
-                        items: [
-                            { name: 'Winter Coat', price: 4500, quantity: 1 }
-                        ],
-                        total: 4500,
-                        status: 'pending',
-                        date: '2024-01-15T09:15:00Z',
-                        shipmentStatus: 'processing'
-                    }
-                ];
-                
-                
-                const allOrders = [...customerOrders, ...mockOrders];
-                
-                localStorage.setItem('customerOrders', JSON.stringify(allOrders));
+                const allOrders = JSON.parse(localStorage.getItem('customerOrders') || '[]');
                 displayOrders(allOrders);
             }
 
             function displayOrders(orders) {
                 if (orders.length === 0) {
-                    ordersList.innerHTML = '<div class="empty-state"><p>No orders found</p></div>';
+                    ordersList.innerHTML = '<div class="empty-state"><p>No orders yet. Orders placed by customers will appear here.</p></div>';
                     return;
                 }
 
+                const shipmentLabels = ['Order Confirmed','Processing','Shipped','Out for Delivery','Delivered'];
+                const shipmentSteps = { 'order_confirmed':0,'processing':1,'shipped':2,'out_for_delivery':3,'delivered':4 };
+
                 const ordersHtml = orders.map(order => {
-                    const shipmentSteps = {
-                        'order_confirmed': 0,
-                        'processing': 1,
-                        'shipped': 2,
-                        'out_for_delivery': 3,
-                        'delivered': 4
-                    };
-                    const shipmentStep = shipmentSteps[order.shipmentStatus] || 0;
-                    
+                    const step = shipmentSteps[order.shipmentStatus] ?? 0;
+                    const items = order.items || [{ name: order.productName, price: order.price, quantity: 1, image: order.productImage }];
+                    const total = order.total || order.price || 0;
+                    const customerName = order.customerName || 'Unknown Customer';
+                    const customerPhone = order.customerPhone || 'N/A';
+                    const orderDate = new Date(order.date || order.createdAt).toLocaleString();
+
                     return `
                     <div class="order-card" data-order-id="${order.id}">
                         <div class="order-header">
                             <div class="order-info">
                                 <h4>Order #${order.id}</h4>
-                                <p class="customer-name">${order.customerName || 'Customer'}</p>
-                                <p class="customer-phone">${order.customerPhone || 'N/A'}</p>
-                                <p class="order-date">${new Date(order.date || order.createdAt).toLocaleString()}</p>
+                                <p><strong>${customerName}</strong></p>
+                                <p>📞 ${customerPhone}</p>
+                                ${order.customerEmail ? `<p>✉️ ${order.customerEmail}</p>` : ''}
+                                <p style="font-size:0.82rem;color:#9ca3af">${orderDate}</p>
                             </div>
                             <div class="order-status status-${order.status}">
                                 ${order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                             </div>
                         </div>
-                        
+
                         <div class="order-items">
-                            ${order.items ? order.items.map(item => `
-                                <div class="order-item">
-                                    <span>${item.name} (x${item.quantity || 1})</span>
-                                    <span>KSH ${(item.price || order.price).toLocaleString()}</span>
+                            ${items.map(item => `
+                                <div class="order-item" style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f3f4f6">
+                                    ${item.image ? `<img src="${item.image}" alt="${item.name}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;flex-shrink:0" />` : ''}
+                                    <div style="flex:1">
+                                        <div style="font-weight:600">${item.name}</div>
+                                        <div style="font-size:0.85rem;color:#6b7280">Qty: ${item.quantity || 1}</div>
+                                    </div>
+                                    <div style="font-weight:700;color:#1f2937">KSH ${(item.price).toLocaleString()}</div>
                                 </div>
-                            `).join('') : `
-                                <div class="order-item">
-                                    <span>${order.productName}</span>
-                                    <span>KSH ${order.price.toLocaleString()}</span>
-                                </div>
-                            `}
+                            `).join('')}
                         </div>
-                        
-                        <div class="order-total">
-                            <strong>Total: KSH ${(order.total || order.price).toLocaleString()}</strong>
+
+                        <div class="order-total" style="text-align:right;padding:12px 0;font-size:1.1rem">
+                            <strong>Total: KSH ${total.toLocaleString()}</strong>
                         </div>
-                        
+
                         <div class="shipment-status-admin">
-                            <h5>Shipment Status</h5>
+                            <h5>Shipment: ${shipmentLabels[step]}</h5>
                             <div class="shipment-mini-tracker">
-                                <div class="shipment-mini-step ${shipmentStep >= 0 ? 'active' : ''}">✓</div>
-                                <div class="shipment-mini-step ${shipmentStep >= 1 ? 'active' : ''}">📍</div>
-                                <div class="shipment-mini-step ${shipmentStep >= 2 ? 'active' : ''}">🚚</div>
-                                <div class="shipment-mini-step ${shipmentStep >= 3 ? 'active' : ''}">📦</div>
-                                <div class="shipment-mini-step ${shipmentStep >= 4 ? 'active' : ''}">✔</div>
+                                ${[0,1,2,3,4].map(i => `<div class="shipment-mini-step ${step >= i ? 'active' : ''}">${['✓','📍','🚚','📦','🎉'][i]}</div>`).join('')}
                             </div>
                             <div class="shipment-controls">
-                                ${shipmentStep < 1 ? `<button class="shipment-btn" onclick="updateShipmentStatus('${order.id}', 'processing')">→ Processing</button>` : ''}
-                                ${shipmentStep < 2 && shipmentStep >= 1 ? `<button class="shipment-btn" onclick="updateShipmentStatus('${order.id}', 'shipped')">→ Shipped</button>` : ''}
-                                ${shipmentStep < 3 && shipmentStep >= 2 ? `<button class="shipment-btn" onclick="updateShipmentStatus('${order.id}', 'out_for_delivery')">→ Out for Delivery</button>` : ''}
-                                ${shipmentStep < 4 && shipmentStep >= 3 ? `<button class="shipment-btn" onclick="updateShipmentStatus('${order.id}', 'delivered')">→ Delivered</button>` : ''}
-                                ${shipmentStep >= 4 ? `<span class="shipment-complete">✓ Delivered</span>` : ''}
+                                ${step < 1 ? `<button class="shipment-btn" onclick="updateShipmentStatus('${order.id}','processing')">→ Mark Processing</button>` : ''}
+                                ${step === 1 ? `<button class="shipment-btn" onclick="updateShipmentStatus('${order.id}','shipped')">→ Mark Shipped</button>` : ''}
+                                ${step === 2 ? `<button class="shipment-btn" onclick="updateShipmentStatus('${order.id}','out_for_delivery')">→ Out for Delivery</button>` : ''}
+                                ${step === 3 ? `<button class="shipment-btn" onclick="updateShipmentStatus('${order.id}','delivered')">→ Mark Delivered</button>` : ''}
+                                ${step === 4 ? `<span class="shipment-complete">✓ Delivered</span>` : ''}
                             </div>
                         </div>
-                        
+
                         <div class="order-actions">
-                            ${order.status === 'pending' ?
-                                `<button class="select-order-btn primary-button" data-order='${JSON.stringify(order)}'>
-                                    Select for STK Push
-                                </button>` : ''
-                            }
+                            ${order.status === 'pending' ? `
+                                <button class="select-order-btn primary-button" data-order='${JSON.stringify(order).replace(/'/g, "&apos;")}'>
+                                    💳 Send STK Push
+                                </button>` : '<span style="color:#16a34a;font-weight:600">✓ Payment Received</span>'}
                         </div>
-                    </div>
-                `;
+                    </div>`;
                 }).join('');
 
                 ordersList.innerHTML = ordersHtml;
-
                 document.querySelectorAll('.select-order-btn').forEach(btn => {
                     btn.addEventListener('click', handleOrderSelection);
                 });
