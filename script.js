@@ -684,6 +684,10 @@ function renderProducts() {
 }
 
 function showOrderConfirmation(order) {
+  const itemImg   = order.items?.[0]?.image   || order.productImage || '';
+  const itemName  = order.items?.[0]?.name    || order.productName  || '';
+  const itemPrice = order.items?.[0]?.price   || order.price        || 0;
+
   const modal = document.createElement('div');
   modal.className = 'order-confirmation-modal';
   modal.innerHTML = `
@@ -692,15 +696,14 @@ function showOrderConfirmation(order) {
         <h2>✓ Order Confirmed!</h2>
         <p>Order ID: <strong>${order.id}</strong></p>
       </div>
-      
       <div class="product-confirmation">
-        <img src="${order.productImage}" alt="${order.productName}" />
+        <img src="${itemImg}" alt="${itemName}" />
         <div>
-          <h3>${order.productName}</h3>
-          <p class="order-price">${formatPrice(order.price)}</p>
+          <h3>${itemName}</h3>
+          <p class="order-price">${formatPrice(itemPrice)}</p>
+          <p style="font-size:0.85rem;color:#6b7280">Hi ${order.customerName}, your order is received!</p>
         </div>
       </div>
-      
       <div class="shipment-tracker">
         <h3>📦 Your Shipment Path</h3>
         <div class="tracking-timeline">
@@ -731,28 +734,20 @@ function showOrderConfirmation(order) {
           </div>
         </div>
       </div>
-      
       <div class="order-info">
         <h4>Order Status: <span class="status-badge pending">PENDING</span></h4>
-        <p>Your order is confirmed and awaiting admin approval for processing.</p>
-        <p style="font-size: 0.9rem; color: #6b7280;">Check your email for tracking updates. You can also track your order in your account.</p>
+        <p>Your order is confirmed. The admin will send an STK Push to <strong>${order.customerPhone}</strong> to complete payment.</p>
       </div>
-      
       <button class="close-modal-btn" onclick="this.closest('.order-confirmation-modal').remove()">
         Continue Shopping
       </button>
     </div>
   `;
-  
   document.body.appendChild(modal);
-  
-
-  setTimeout(() => {
-    if (modal.parentNode) {
-      modal.remove();
-    }
-  }, 8000);
+  setTimeout(() => { if (modal.parentNode) modal.remove(); }, 10000);
 }
+
+searchButton.addEventListener("click", renderProducts);
 
 function showCustomerForm(product, addButton) {
   const modal = document.createElement('div');

@@ -656,7 +656,7 @@
 
                         <div class="order-actions">
                             ${order.status === 'pending' ? `
-                                <button class="select-order-btn primary-button" data-order='${JSON.stringify(order).replace(/'/g, "&apos;")}'>
+                                <button class="select-order-btn primary-button" data-orderid="${order.id}">
                                     💳 Send STK Push
                                 </button>` : '<span style="color:#16a34a;font-weight:600">✓ Payment Received</span>'}
                         </div>
@@ -702,33 +702,37 @@
             }
 
             function handleOrderSelection(event) {
-                const orderData = JSON.parse(event.target.dataset.order);
-                
-        
-                const itemsCount = orderData.items ? orderData.items.length : 1;
-                const itemsSummary = orderData.items ? 
-                    orderData.items.map(i => i.name).join(', ') : 
-                    orderData.productName;
+                const orderId = event.target.dataset.orderid;
+                const allOrders = JSON.parse(localStorage.getItem('customerOrders') || '[]');
+                const orderData = allOrders.find(o => o.id === orderId);
+                if (!orderData) return;
+
+                const itemsSummary = orderData.items
+                    ? orderData.items.map(i => i.name).join(', ')
+                    : (orderData.productName || 'Item');
+                const total = orderData.total || orderData.price || 0;
 
                 selectedOrderDetails.innerHTML = `
                     <strong>Customer:</strong> ${orderData.customerName || 'Customer'}<br>
                     <strong>Phone:</strong> ${orderData.customerPhone || 'N/A'}<br>
                     <strong>Items:</strong> ${itemsSummary}<br>
-                    <strong>Items Count:</strong> ${itemsCount}<br>
-                    <strong>Total:</strong> KSH ${(orderData.total || orderData.price).toLocaleString()}
+                    <strong>Total:</strong> KSH ${total.toLocaleString()}
                 `;
 
-                quickStkAmount.textContent = (orderData.total || orderData.price).toLocaleString();
-                quickStkBtn.dataset.order = JSON.stringify(orderData);
+                quickStkAmount.textContent = total.toLocaleString();
+                quickStkBtn.dataset.orderid = orderId;
 
                 quickStkInfo.style.display = 'block';
-                document.getElementById('stk-push').scrollIntoView({ behavior: 'smooth' });
-
                 document.querySelector('[data-section="stk-push"]').click();
+                document.getElementById('stk-push').scrollIntoView({ behavior: 'smooth' });
             }
 
             function handleQuickStkPush() {
-                const orderData = JSON.parse(quickStkBtn.dataset.order);
+                const orderId = quickStkBtn.dataset.orderid;
+                const allOrders = JSON.parse(localStorage.getItem('customerOrders') || '[]');
+                const orderData = allOrders.find(o => o.id === orderId);
+                if (!orderData) return;
+
                 customerPhone.value = orderData.customerPhone || '';
                 paymentAmount.value = orderData.total || orderData.price;
                 paymentDescription.value = `Payment for Order #${orderData.id}`;
