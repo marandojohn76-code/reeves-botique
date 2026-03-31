@@ -1,4 +1,3 @@
-// Admin Login Script
 document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('adminLoginForm');
     const usernameInput = document.getElementById('username');
@@ -6,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const errorMessage = document.getElementById('errorMessage');
     const loginButton = document.querySelector('.login-button');
 
-    // Forgot password elements
+
     const forgotPasswordLink = document.getElementById('forgotPasswordLink');
     const forgotPasswordModal = document.getElementById('forgotPasswordModal');
     const closeModal = document.getElementById('closeModal');
@@ -24,7 +23,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const newPasswordInput = document.getElementById('newPassword');
     const confirmNewPassword = document.getElementById('confirmNewPassword');
 
-    // Admin credentials (in a real app, this would be server-side)
     const ADMIN_CREDENTIALS = {
         username: 'admin',
         password: 'reeves001!'
@@ -76,46 +74,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
         showLoading();
 
-        // Simulate API call delay
+        
         setTimeout(() => {
             if (authenticate(username, password)) {
-                // Store admin session (in a real app, use secure tokens)
                 sessionStorage.setItem('adminLoggedIn', 'true');
                 sessionStorage.setItem('adminLoginTime', new Date().toISOString());
-
-                // Redirect to admin dashboard
                 window.location.href = 'admin-dashboard.html';
             } else {
                 showError('Invalid username or password. Please try again.');
             }
         }, 1000);
     }
-
-    // Event listeners
     loginForm.addEventListener('submit', handleLogin);
-
-    // Clear error when user starts typing
     usernameInput.addEventListener('input', hideError);
     passwordInput.addEventListener('input', hideError);
-
-    // Forgot password event listeners
     forgotPasswordLink.addEventListener('click', openForgotPasswordModal);
     closeModal.addEventListener('click', closeForgotPasswordModal);
     forgotPasswordForm.addEventListener('submit', handleForgotPassword);
     resetCodeForm.addEventListener('submit', handleResetPassword);
     backToEmailBtn.addEventListener('click', showEmailForm);
 
-    // Close modal when clicking outside
     window.addEventListener('click', function(event) {
         if (event.target === forgotPasswordModal) {
             closeForgotPasswordModal();
         }
     });
-
-    // Auto-focus username field
     usernameInput.focus();
-
-    // Handle Enter key in password field
     passwordInput.addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
@@ -204,19 +188,15 @@ function handleForgotPassword(event) {
         return;
     }
 
-    // For demo purposes, accept any email ending with the domain
     if (!email.includes('@reevesboutique.com') && !email.includes('@admin.com')) {
         showForgotError('Email address not found in our system');
         return;
     }
 
-    // Show loading state
     sendResetBtn.disabled = true;
     sendResetBtn.innerHTML = '<span>Sending...</span>';
 
-    // Simulate API call
     setTimeout(() => {
-        // Generate a 6-digit reset code
         const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
         localStorage.setItem('resetCode', resetCode);
         localStorage.setItem('resetEmail', email);
@@ -224,7 +204,6 @@ function handleForgotPassword(event) {
 
         showForgotSuccess(`Reset code sent to ${email}. Please check your email.`);
 
-        // Show reset code form after 2 seconds
         setTimeout(() => {
             forgotPasswordForm.style.display = 'none';
             resetCodeForm.style.display = 'block';
@@ -287,23 +266,17 @@ function handleResetPassword(event) {
         return;
     }
 
-    // Show loading state
     resetPasswordBtn.disabled = true;
     resetPasswordBtn.innerHTML = '<span>Resetting...</span>';
 
-    // Simulate API call
     setTimeout(() => {
-        // Update password (in a real app, this would be server-side)
         ADMIN_CREDENTIALS.password = newPass;
-
-        // Clear reset data
         localStorage.removeItem('resetCode');
         localStorage.removeItem('resetEmail');
         localStorage.removeItem('resetCodeExpiry');
 
         showResetSuccess('Password reset successfully! You can now login with your new password.');
 
-        // Close modal after 3 seconds
         setTimeout(() => {
             closeForgotPasswordModal();
         }, 3000);

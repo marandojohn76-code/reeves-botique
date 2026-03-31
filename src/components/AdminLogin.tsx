@@ -13,7 +13,7 @@ export default function AdminLogin({ onLogin, onCancel }: AdminLoginProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Simple authentication - in a real app, this would be server-side
+  
     if (username === "admin" && password === "admin123") {
       onLogin(true);
     } else {

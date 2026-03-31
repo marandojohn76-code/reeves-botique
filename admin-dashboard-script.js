@@ -1,4 +1,3 @@
-// Admin Dashboard Script
 document.addEventListener('DOMContentLoaded', function() {
     // Check if admin is logged in
     if (!sessionStorage.getItem('adminLoggedIn')) {
@@ -217,8 +216,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function loadOrders() {
-    // Simulate loading orders from a database
-    // In a real app, this would be an API call
     const mockOrders = [
         {
             id: 'ORD001',
@@ -256,8 +253,6 @@ function loadOrders() {
             date: '2024-01-15T09:15:00Z'
         }
     ];
-
-    // Store orders in localStorage for demo purposes
     localStorage.setItem('customerOrders', JSON.stringify(mockOrders));
     displayOrders(mockOrders);
 }
@@ -304,7 +299,6 @@ function displayOrders(orders) {
 
     ordersList.innerHTML = ordersHtml;
 
-    // Add event listeners to select order buttons
     document.querySelectorAll('.select-order-btn').forEach(btn => {
         btn.addEventListener('click', handleOrderSelection);
     });
@@ -333,8 +327,6 @@ function filterOrders() {
 
 function handleOrderSelection(event) {
     const orderData = JSON.parse(event.target.dataset.order);
-
-    // Update quick STK push section
     selectedOrderDetails.innerHTML = `
         <strong>Customer:</strong> ${orderData.customerName}<br>
         <strong>Phone:</strong> ${orderData.customerPhone}<br>
@@ -344,25 +336,21 @@ function handleOrderSelection(event) {
 
     quickStkAmount.textContent = orderData.total.toLocaleString();
 
-    // Store selected order for quick STK push
-    quickStkBtn.dataset.order = JSON.stringify(orderData);
 
-    // Show quick STK section and scroll to it
+    quickStkBtn.dataset.order = JSON.stringify(orderData);
     quickStkInfo.style.display = 'block';
     document.getElementById('stk-push').scrollIntoView({ behavior: 'smooth' });
 
-    // Switch to STK Push tab
     document.querySelector('[data-section="stk-push"]').click();
 }
 
 function handleQuickStkPush() {
     const orderData = JSON.parse(quickStkBtn.dataset.order);
 
-    // Fill the STK push form
+
     customerPhone.value = orderData.customerPhone;
     paymentAmount.value = orderData.total;
     paymentDescription.value = `Payment for Order #${orderData.id}`;
 
-    // Submit the form
     stkPushForm.dispatchEvent(new Event('submit'));
 }

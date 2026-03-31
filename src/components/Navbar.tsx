@@ -50,8 +50,8 @@ export default function Navbar({ cartCount, onSearch, onAdminClick }: NavbarProp
       </div>
 
       <nav className="navbar-bottom">
-        <a href="#">🏠 Home</a>
-        <a href="#">⚡ Flash Sales</a>
+        <a href="#"> Home</a>
+        <a href="#"> Flash Sales</a>
         <a href="#">New Arrivals</a>
         <a href="#">Top Deals</a>
         <a href="#">Brands</a>

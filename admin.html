@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- ===== LOGIN PAGE SECTION ===== -->
     <div id="loginPage" class="admin-login-page">
         <div class="login-container">
             <div class="login-header">
@@ -58,7 +57,6 @@
         </div>
     </div>
 
-    <!-- ===== FORGOT PASSWORD MODAL ===== -->
     <div id="forgotPasswordModal" class="modal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
@@ -84,8 +82,6 @@
                         <span>Send Reset Code</span>
                     </button>
                 </form>
-
-                <!-- Reset Code Form (shown after email is sent) -->
                 <form id="resetCodeForm" class="reset-form" style="display: none;">
                     <div class="form-group">
                         <label for="resetCode">Reset Code</label>
@@ -130,8 +126,6 @@
             </div>
         </div>
     </div>
-
-    <!-- ===== DASHBOARD PAGE SECTION ===== -->
     <div id="dashboardPage" class="admin-dashboard-page" style="display: none;">
         <header class="admin-header">
             <div class="header-content">
@@ -153,7 +147,6 @@
         </nav>
 
         <main class="admin-main">
-            <!-- Orders Section -->
             <section id="orders" class="admin-section active">
                 <div class="section-header">
                     <h2>Customer Orders</h2>
@@ -173,12 +166,9 @@
                     </div>
 
                     <div id="ordersList" class="orders-list">
-                        <!-- Orders will be loaded here -->
                     </div>
                 </div>
             </section>
-
-            <!-- STK Push Section -->
             <section id="stk-push" class="admin-section">
                 <div class="section-header">
                     <h2>Send STK Push Payment</h2>
@@ -235,7 +225,6 @@
                     </form>
                 </div>
 
-                <!-- Quick STK Push from Orders -->
                 <div class="quick-stk-section">
                     <h3>Quick STK Push from Orders</h3>
                     <p>Select an order above to quickly send STK Push to the customer</p>
@@ -249,7 +238,6 @@
                 </div>
             </section>
 
-            <!-- Transactions Section -->
             <section id="transactions" class="admin-section">
                 <div class="section-header">
                     <h2>Transaction History</h2>
@@ -276,7 +264,6 @@
                 </div>
             </section>
 
-            <!-- Settings Section -->
             <section id="settings" class="admin-section">
                 <div class="section-header">
                     <h2>Admin Settings</h2>
@@ -323,11 +310,9 @@
         </main>
     </div>
 
-    <!-- Combined Scripts -->
     <script>
-        // ===== COMBINED ADMIN SCRIPT =====
         document.addEventListener('DOMContentLoaded', function() {
-            // DOM Elements - Login
+
             const loginPage = document.getElementById('loginPage');
             const dashboardPage = document.getElementById('dashboardPage');
             const adminLoginForm = document.getElementById('adminLoginForm');
@@ -336,7 +321,7 @@
             const errorMessage = document.getElementById('errorMessage');
             const loginButton = document.querySelector('.login-button');
 
-            // Forgot password elements
+    
             const forgotPasswordLink = document.getElementById('forgotPasswordLink');
             const forgotPasswordModal = document.getElementById('forgotPasswordModal');
             const closeModal = document.getElementById('closeModal');
@@ -346,19 +331,18 @@
             const resetPasswordBtn = document.getElementById('resetPasswordBtn');
             const backToEmailBtn = document.getElementById('backToEmailBtn');
 
-            // DOM Elements - Dashboard
+    
             const logoutBtn = document.getElementById('logoutBtn');
             const currentTime = document.getElementById('currentTime');
             const navLinks = document.querySelectorAll('.nav-link');
             const adminSections = document.querySelectorAll('.admin-section');
 
-            // Orders Elements
+    
             const ordersList = document.getElementById('ordersList');
             const orderStatusFilter = document.getElementById('orderStatusFilter');
             const customerSearch = document.getElementById('customerSearch');
             const refreshOrdersBtn = document.getElementById('refreshOrdersBtn');
 
-            // STK Push Elements
             const stkPushForm = document.getElementById('stkPushForm');
             const customerPhone = document.getElementById('customerPhone');
             const paymentAmount = document.getElementById('paymentAmount');
@@ -367,19 +351,19 @@
             const stkErrorMessage = document.getElementById('stkErrorMessage');
             const stkSuccessMessage = document.getElementById('stkSuccessMessage');
 
-            // Quick STK Push Elements
+    
             const quickStkInfo = document.getElementById('quickStkInfo');
             const selectedOrderDetails = document.getElementById('selectedOrderDetails');
             const quickStkAmount = document.getElementById('quickStkAmount');
             const quickStkBtn = document.getElementById('quickStkBtn');
 
-            // Admin credentials
+            
             const ADMIN_CREDENTIALS = {
                 username: 'admin',
                 password: 'reeves001!'
             };
 
-            // Initialize
+    
             initializeApp();
 
             function initializeApp() {
@@ -408,7 +392,7 @@
                 loadOrders();
             }
 
-            // ===== LOGIN EVENT LISTENERS =====
+        
             adminLoginForm.addEventListener('submit', handleLogin);
             usernameInput.addEventListener('input', () => { errorMessage.style.display = 'none'; });
             passwordInput.addEventListener('input', () => { errorMessage.style.display = 'none'; });
@@ -431,7 +415,7 @@
                 }
             });
 
-            // ===== DASHBOARD EVENT LISTENERS =====
+    
             logoutBtn.addEventListener('click', handleLogout);
             navLinks.forEach(link => link.addEventListener('click', handleNavClick));
             stkPushForm.addEventListener('submit', handleStkPush);
@@ -442,7 +426,7 @@
 
             setInterval(updateCurrentTime, 60000);
 
-            // ===== LOGIN FUNCTIONS =====
+            
             function handleLogin(event) {
                 event.preventDefault();
                 const username = usernameInput.value.trim();
@@ -581,7 +565,7 @@
                 }, 1500);
             }
 
-            // ===== DASHBOARD FUNCTIONS =====
+        
             function initializeDashboard() {
                 loadOrders();
             }
@@ -603,10 +587,10 @@
             }
 
             function loadOrders() {
-                // Load customer orders from localStorage
+            
                 const customerOrders = JSON.parse(localStorage.getItem('customerOrders') || '[]');
                 
-                // Keep existing mock orders for demo + new customer orders
+    
                 const mockOrders = [
                     {
                         id: 'ORD001',
@@ -648,7 +632,7 @@
                     }
                 ];
                 
-                // Combine mock orders with customer orders (customer orders first)
+                
                 const allOrders = [...customerOrders, ...mockOrders];
                 
                 localStorage.setItem('customerOrders', JSON.stringify(allOrders));
@@ -774,7 +758,7 @@
             function handleOrderSelection(event) {
                 const orderData = JSON.parse(event.target.dataset.order);
                 
-                // Handle both old format (items array) and new format (single product)
+        
                 const itemsCount = orderData.items ? orderData.items.length : 1;
                 const itemsSummary = orderData.items ? 
                     orderData.items.map(i => i.name).join(', ') : 

@@ -1,5 +1,5 @@
 const products = [
-  // ===== WOMEN'S FASHION =====
+
   {
     id: 1,
     name: "Floral Midi Dress",
@@ -89,7 +89,7 @@ const products = [
     image: "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=500&q=80",
   },
 
-  // ===== MEN'S FASHION =====
+
   {
     id: 9,
     name: "Men's Slim Fit Suit",
@@ -178,7 +178,7 @@ const products = [
     image: "https://images.unsplash.com/photo-1602810318383-e386cc432b60?w=500&q=80",
   },
 
-  // ===== SHOES =====
+
   {
     id: 17,
     name: "Leather Ankle Boots",
@@ -268,7 +268,7 @@ const products = [
     image: "https://images.unsplash.com/photo-1572821160211-efdc51a8d64f?w=500&q=80",
   },
 
-  // ===== BAGS =====
+  
   {
     id: 25,
     name: "Quilted Shoulder Bag",
@@ -357,7 +357,7 @@ const products = [
     image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80",
   },
 
-  // ===== ACCESSORIES =====
+  
   {
     id: 33,
     name: "Gold Hoop Earrings",
@@ -444,7 +444,7 @@ const products = [
     image: "https://images.unsplash.com/photo-1520099820605-87e4680ef7de?w=500&q=80",
   },
 
-  // ===== BEAUTY =====
+
   {
     id: 41,
     name: "Matte Lipstick Set",
@@ -534,7 +534,7 @@ const products = [
     image: "https://images.unsplash.com/photo-1608208184666-9c3d5fd2e585?w=500&q=80",
   },
 
-  // ===== KIDS =====
+  
   {
     id: 49,
     name: "Kids Sneakers",
@@ -677,7 +677,7 @@ function renderProducts() {
     `;
     const addButton = card.querySelector(".add-to-cart");
     addButton.addEventListener("click", () => {
-      // Create order object
+    
       const order = {
         id: 'ORD-' + Date.now(),
         productId: product.id,
@@ -691,12 +691,12 @@ function renderProducts() {
         phone: ''
       };
       
-      // Save order to localStorage
+      
       const existingOrders = JSON.parse(localStorage.getItem('customerOrders') || '[]');
       existingOrders.unshift(order);
       localStorage.setItem('customerOrders', JSON.stringify(existingOrders));
       
-      // Show order confirmation
+      
       showOrderConfirmation(order);
       
       cartTotal += 1;
@@ -771,7 +771,7 @@ function showOrderConfirmation(order) {
   
   document.body.appendChild(modal);
   
-  // Auto-close after 8 seconds
+
   setTimeout(() => {
     if (modal.parentNode) {
       modal.remove();
@@ -792,7 +792,6 @@ categoryBar.addEventListener("click", (event) => {
   setActiveCategory(target);
 });
 
-// Filter by category from featured cards
 function filterByCategory(categoryName) {
   const categoryBtn = Array.from(document.querySelectorAll('.category-pill')).find(
     btn => btn.dataset.category === categoryName
@@ -802,8 +801,6 @@ function filterByCategory(categoryName) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
-
-// Newsletter form handler
 document.getElementById('newsletterForm')?.addEventListener('submit', function(e) {
   e.preventDefault();
   const email = this.querySelector('input[type="email"]').value;

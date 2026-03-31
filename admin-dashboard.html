@@ -28,7 +28,7 @@
         </nav>
 
         <main class="admin-main">
-            <!-- Orders Section -->
+        
             <section id="orders" class="admin-section active">
                 <div class="section-header">
                     <h2>Customer Orders</h2>
@@ -48,12 +48,14 @@
                     </div>
 
                     <div id="ordersList" class="orders-list">
-                        <!-- Orders will be loaded here -->
+                        <div class="empty-state">
+                            <p>No orders found</p>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- STK Push Section -->
+        
             <section id="stk-push" class="admin-section">
                 <div class="section-header">
                     <h2>Send STK Push Payment</h2>
@@ -110,7 +112,6 @@
                     </form>
                 </div>
 
-                <!-- Quick STK Push from Orders -->
                 <div class="quick-stk-section">
                     <h3>Quick STK Push from Orders</h3>
                     <p>Select an order above to quickly send STK Push to the customer</p>
@@ -124,7 +125,6 @@
                 </div>
             </section>
 
-            <!-- Transactions Section -->
             <section id="transactions" class="admin-section">
                 <div class="section-header">
                     <h2>Transaction History</h2>
@@ -151,7 +151,6 @@
                 </div>
             </section>
 
-            <!-- Settings Section -->
             <section id="settings" class="admin-section">
                 <div class="section-header">
                     <h2>Admin Settings</h2>
