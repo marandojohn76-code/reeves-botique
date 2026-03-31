@@ -783,68 +783,11 @@
 
             function handleQuickStkPush() {
                 const orderData = JSON.parse(quickStkBtn.dataset.order);
-
                 customerPhone.value = orderData.customerPhone || '';
                 paymentAmount.value = orderData.total || orderData.price;
                 paymentDescription.value = `Payment for Order #${orderData.id}`;
-
+                sendStkBtn.dataset.orderId = orderData.id;
                 stkPushForm.dispatchEvent(new Event('submit'));
-            }
-
-            function handleStkPush(event) {
-                event.preventDefault();
-
-                const phone = customerPhone.value.trim();
-                const amount = parseFloat(paymentAmount.value);
-                const description = paymentDescription.value.trim();
-
-                stkErrorMessage.style.display = 'none';
-                stkSuccessMessage.style.display = 'none';
-
-                if (!validatePhoneNumber(phone)) {
-                    stkErrorMessage.textContent = 'Please enter a valid Kenyan phone number';
-                    stkErrorMessage.style.display = 'block';
-                    return;
-                }
-
-                if (isNaN(amount) || amount < 100) {
-                    stkErrorMessage.textContent = 'Please enter an amount of at least KSH 100';
-                    stkErrorMessage.style.display = 'block';
-                    return;
-                }
-
-                sendStkBtn.disabled = true;
-                sendStkBtn.innerHTML = '<span>Sending...</span>';
-
-                setTimeout(() => {
-                    const formattedPhone = formatPhoneNumber(phone);
-                    const transactionId = 'TXN' + Date.now();
-
-                    const transaction = {
-                        id: transactionId,
-                        phone: formattedPhone,
-                        amount: amount,
-                        description: description || 'STK Push Payment',
-                        timestamp: new Date().toISOString(),
-                        status: 'sent'
-                    };
-
-                    saveTransaction(transaction);
-
-                    stkSuccessMessage.textContent = `STK Push sent successfully to ${formattedPhone} for KSH ${amount.toLocaleString()}`;
-                    stkSuccessMessage.style.display = 'block';
-                    sendStkBtn.disabled = false;
-                    sendStkBtn.innerHTML = '<span>Send STK Push</span>';
-
-                    stkPushForm.reset();
-                }, 2000);
-            }
-
-            function saveTransaction(transaction) {
-                const transactions = JSON.parse(localStorage.getItem('stkTransactions') || '[]');
-                transactions.unshift(transaction);
-                if (transactions.length > 50) transactions.splice(50);
-                localStorage.setItem('stkTransactions', JSON.stringify(transactions));
             }
 
             function validatePhoneNumber(phone) {
@@ -852,11 +795,88 @@
                 return /^(?:254|0)7\d{8}$/.test(digits);
             }
 
-            function formatPhoneNumber(phone) {
-                const digits = phone.replace(/\D/g, '');
-                if (digits.startsWith('254')) return '+' + digits;
-                if (digits.startsWith('0')) return '+254' + digits.slice(1);
-                return '+' + digits;
+            async function handleStkPush(event) {
+                event.preventDefault();
+
+                const phone = customerPhone.value.trim();
+                const amount = parseFloat(paymentAmount.value);
+                const description = paymentDescription.value.trim();
+                const orderId = sendStkBtn.dataset.orderId || null;
+
+                stkErrorMessage.style.display = 'none';
+                stkSuccessMessage.style.display = 'none';
+
+                if (!validatePhoneNumber(phone)) {
+                    stkErrorMessage.textContent = 'Please enter a valid Kenyan phone number (07XXXXXXXX)';
+                    stkErrorMessage.style.display = 'block';
+                    return;
+                }
+
+                if (isNaN(amount) || amount < 1) {
+                    stkErrorMessage.textContent = 'Please enter a valid amount';
+                    stkErrorMessage.style.display = 'block';
+                    return;
+                }
+
+                sendStkBtn.disabled = true;
+                sendStkBtn.innerHTML = '<span>⏳ Sending STK Push...</span>';
+
+                try {
+                    const response = await fetch('http://localhost:3001/api/stk/push', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ phone, amount, description, order_id: orderId })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        stkErrorMessage.textContent = data.error || 'STK Push failed. Try again.';
+                        stkErrorMessage.style.display = 'block';
+                    } else {
+                        stkSuccessMessage.textContent = `✅ ${data.message} (Transaction: ${data.transaction_id})`;
+                        stkSuccessMessage.style.display = 'block';
+                        stkPushForm.reset();
+                        delete sendStkBtn.dataset.orderId;
+
+                        // Poll for payment status every 5s for 30s
+                        if (data.checkout_request_id) {
+                            pollPaymentStatus(data.checkout_request_id, data.transaction_id);
+                        }
+                    }
+                } catch (err) {
+                    stkErrorMessage.textContent = 'Cannot connect to server. Make sure the backend is running (npm run server).';
+                    stkErrorMessage.style.display = 'block';
+                } finally {
+                    sendStkBtn.disabled = false;
+                    sendStkBtn.innerHTML = '<span>Send STK Push</span>';
+                }
+            }
+
+            async function pollPaymentStatus(checkoutRequestId, txnId) {
+                let attempts = 0;
+                const maxAttempts = 6;
+                const interval = setInterval(async () => {
+                    attempts++;
+                    try {
+                        const res = await fetch('http://localhost:3001/api/stk/query', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ checkout_request_id: checkoutRequestId })
+                        });
+                        const data = await res.json();
+                        if (data.ResultCode === '0') {
+                            clearInterval(interval);
+                            stkSuccessMessage.textContent = `✅ Payment confirmed! M-Pesa Ref: ${data.ResultDesc}`;
+                            loadOrders();
+                        } else if (data.ResultCode && data.ResultCode !== '1032') {
+                            clearInterval(interval);
+                            stkErrorMessage.textContent = `Payment failed: ${data.ResultDesc}`;
+                            stkErrorMessage.style.display = 'block';
+                        }
+                    } catch (e) { /* silent */ }
+                    if (attempts >= maxAttempts) clearInterval(interval);
+                }, 5000);
             }
         });
     </script>
