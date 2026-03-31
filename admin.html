@@ -586,10 +586,43 @@
                 document.getElementById(sectionId).classList.add('active');
             }
 
-            function loadOrders() {
-                const allOrders = JSON.parse(localStorage.getItem('customerOrders') || '[]');
-                displayOrders(allOrders);
+            // Merge any new orders from 'customerOrders' into the persistent 'allOrders' store
+            function syncOrders() {
+                const incoming = JSON.parse(localStorage.getItem('customerOrders') || '[]');
+                const stored   = JSON.parse(localStorage.getItem('allOrders') || '[]');
+                const storedIds = new Set(stored.map(o => o.id));
+                let changed = false;
+                incoming.forEach(o => {
+                    if (!storedIds.has(o.id)) { stored.unshift(o); changed = true; }
+                });
+                // Sync status updates back from stored into customerOrders
+                stored.forEach(s => {
+                    const idx = incoming.findIndex(o => o.id === s.id);
+                    if (idx !== -1) {
+                        incoming[idx].status          = s.status;
+                        incoming[idx].shipmentStatus  = s.shipmentStatus;
+                    }
+                });
+                if (changed) {
+                    localStorage.setItem('allOrders', JSON.stringify(stored));
+                    localStorage.setItem('customerOrders', JSON.stringify(incoming));
+                }
+                return stored;
             }
+
+            function loadOrders() {
+                const allOrders = syncOrders();
+                // Sort newest first
+                allOrders.sort((a, b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt));
+                displayOrders(allOrders);
+                // Update order count badge
+                const pending = allOrders.filter(o => o.status === 'pending').length;
+                document.querySelector('[data-section="orders"]').textContent =
+                    pending > 0 ? `Orders (${pending} pending)` : 'Orders';
+            }
+
+            // Auto-refresh every 5 seconds to catch new orders
+            setInterval(loadOrders, 5000);
 
             function displayOrders(orders) {
                 if (orders.length === 0) {
@@ -670,40 +703,35 @@
             }
             
             function updateShipmentStatus(orderId, newStatus) {
-                const allOrders = JSON.parse(localStorage.getItem('customerOrders') || '[]');
-                const orderIndex = allOrders.findIndex(o => o.id === orderId);
-                
-                if (orderIndex !== -1) {
-                    allOrders[orderIndex].shipmentStatus = newStatus;
-                    localStorage.setItem('customerOrders', JSON.stringify(allOrders));
-                    loadOrders();
-                }
+                ['allOrders', 'customerOrders'].forEach(key => {
+                    const orders = JSON.parse(localStorage.getItem(key) || '[]');
+                    const idx = orders.findIndex(o => o.id === orderId);
+                    if (idx !== -1) {
+                        orders[idx].shipmentStatus = newStatus;
+                        localStorage.setItem(key, JSON.stringify(orders));
+                    }
+                });
+                loadOrders();
             }
 
             function filterOrders() {
                 const statusFilter = orderStatusFilter.value;
                 const searchTerm = customerSearch.value.toLowerCase();
-
-                const allOrders = JSON.parse(localStorage.getItem('customerOrders') || '[]');
-                let filteredOrders = allOrders;
-
-                if (statusFilter !== 'all') {
-                    filteredOrders = filteredOrders.filter(order => order.status === statusFilter);
-                }
-
+                let orders = JSON.parse(localStorage.getItem('allOrders') || '[]');
+                orders.sort((a, b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt));
+                if (statusFilter !== 'all') orders = orders.filter(o => o.status === statusFilter);
                 if (searchTerm) {
-                    filteredOrders = filteredOrders.filter(order =>
-                        order.customerName.toLowerCase().includes(searchTerm) ||
-                        order.customerPhone.includes(searchTerm)
+                    orders = orders.filter(o =>
+                        (o.customerName || '').toLowerCase().includes(searchTerm) ||
+                        (o.customerPhone || '').includes(searchTerm)
                     );
                 }
-
-                displayOrders(filteredOrders);
+                displayOrders(orders);
             }
 
             function handleOrderSelection(event) {
                 const orderId = event.target.dataset.orderid;
-                const allOrders = JSON.parse(localStorage.getItem('customerOrders') || '[]');
+                const allOrders = JSON.parse(localStorage.getItem('allOrders') || '[]');
                 const orderData = allOrders.find(o => o.id === orderId);
                 if (!orderData) return;
 
@@ -729,7 +757,7 @@
 
             function handleQuickStkPush() {
                 const orderId = quickStkBtn.dataset.orderid;
-                const allOrders = JSON.parse(localStorage.getItem('customerOrders') || '[]');
+                const allOrders = JSON.parse(localStorage.getItem('allOrders') || '[]');
                 const orderData = allOrders.find(o => o.id === orderId);
                 if (!orderData) return;
 

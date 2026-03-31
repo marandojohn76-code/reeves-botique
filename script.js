@@ -824,6 +824,11 @@ function showCustomerForm(product, addButton) {
     existingOrders.unshift(order);
     localStorage.setItem('customerOrders', JSON.stringify(existingOrders));
 
+    // Also save to allOrders so admin dashboard always sees every order
+    const allOrders = JSON.parse(localStorage.getItem('allOrders') || '[]');
+    allOrders.unshift(order);
+    localStorage.setItem('allOrders', JSON.stringify(allOrders));
+
     modal.remove();
     showOrderConfirmation(order);
 
